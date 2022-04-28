@@ -37,7 +37,7 @@ func CreateUser(c *gin.Context) {
 }
 
 func GetUser(c *gin.Context) {
-	c.String(http.StatusNotImplemented, "implement me!")
+	// userId, userErr := strconv.ParseInt(c.Params("user_id"), 10, 64)
 }
 
 func SearchUser(c *gin.Context) {
