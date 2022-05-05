@@ -2,9 +2,14 @@ package users
 
 import (
 	"fmt"
+	"github.com/Oudom/bookstore_users-api/utils/date_utils"
 
 	"github.com/Oudom/bookstore_users-api/datasources/mysql/users_db"
 	"github.com/Oudom/bookstore_users-api/utils/errors"
+)
+
+const (
+	queryInsertUser = ("INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ? , ?);")
 )
 
 var (
@@ -30,13 +35,24 @@ func (user *User) Get() *errors.RestErr {
 }
 
 func (user *User) Save() *errors.RestErr {
-	current := usersDB[user.Id]
-	if current != nil {
-		if current.Email == user.Email {
-			return errors.NewBadRequestError(fmt.Sprintf("email %s already registered", user.Email))
-		}
-		return errors.NewBadRequestError(fmt.Sprintf("user %d already exists", user.Id))
+	stmt, err := users_db.Client.Prepare(queryInsertUser)
+	if err != nil {
+		return errors.NewInternalServerError(err.Error())
 	}
-	usersDB[user.Id] = user
+	defer stmt.Close()
+
+	user.DateCreated = date_utils.GetNowString()
+
+	insertResult, err := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
+	if err != nil {
+		return errors.NewInternalServerError(
+			fmt.Sprintf("error when trying to save users: %s", err.Error()))
+	}
+	userId, err := insertResult.LastInsertId()
+	if err != nil {
+		return errors.NewInternalServerError(
+			fmt.Sprintf("error when trying to save users: %s", err.Error()))
+	}
+	user.Id = userId
 	return nil
 }
