@@ -3,13 +3,16 @@ package users
 import (
 	"fmt"
 	"github.com/Oudom/bookstore_users-api/utils/date_utils"
+	"strings"
 
 	"github.com/Oudom/bookstore_users-api/datasources/mysql/users_db"
 	"github.com/Oudom/bookstore_users-api/utils/errors"
 )
 
 const (
-	queryInsertUser = ("INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ? , ?);")
+	indexUniqueEmail = "email_UNIQUE"
+	queryInsertUser  = ("INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ? , ?);")
+	queryGetUser     = "SELECT id, first_name, last_name, email, date"
 )
 
 var (
@@ -45,6 +48,10 @@ func (user *User) Save() *errors.RestErr {
 
 	insertResult, err := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
 	if err != nil {
+		if strings.Contains(err.Error(), indexUniqueEmail) {
+			return errors.NewBadRequestError(
+				fmt.Sprintf("email %s already exists", user.Email))
+		}
 		return errors.NewInternalServerError(
 			fmt.Sprintf("error when trying to save users: %s", err.Error()))
 	}
