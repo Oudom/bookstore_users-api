@@ -2,6 +2,7 @@ package users
 
 import (
 	"fmt"
+
 	"github.com/Oudom/bookstore_users-api/datasources/mysql/users_db"
 	"github.com/Oudom/bookstore_users-api/utils/date_utils"
 	"github.com/Oudom/bookstore_users-api/utils/errors"
@@ -9,13 +10,8 @@ import (
 )
 
 const (
-	errorNoRows     = "no rows in result set"
 	queryInsertUser = ("INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ? , ?);")
 	queryGetUser    = "SELECT id, first_name, last_name, email, date_created FROM users WHERE id=?;"
-)
-
-var (
-	usersDB = make(map[int64]*User)
 )
 
 func (user *User) Get() *errors.RestErr {
