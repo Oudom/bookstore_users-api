@@ -3,9 +3,10 @@ package users_db
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 const (
@@ -18,6 +19,10 @@ const (
 var (
 	Client *sql.DB
 
+	// username = "root"
+	// password = "4449345"
+	// host     = "127.0.0.1:3306"
+	// schema   = "users_db"
 	username = os.Getenv(mysql_users_username)
 	password = os.Getenv(mysql_users_password)
 	host     = os.Getenv(mysql_users_host)
