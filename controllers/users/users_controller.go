@@ -55,7 +55,7 @@ func UpdateUer(c *gin.Context) {
 	}
 
 	user.Id = UserId
-	result, err := services.UpdateUser((user)
+	result, err := services.UpdateUser(user)
 	if err != nil {
 		c.JSON(err.Status, err)
 		return
