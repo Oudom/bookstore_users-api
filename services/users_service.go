@@ -12,6 +12,7 @@ func GetUser(userId int64) (*users.User, *errors.RestErr) {
 	}
 	return result, nil
 }
+
 func CreateUser(user users.User) (*users.User, *errors.RestErr) {
 	if err := user.Validate(); err != nil {
 		return nil, err
@@ -21,4 +22,21 @@ func CreateUser(user users.User) (*users.User, *errors.RestErr) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func UpdateUser(user users.User) (*users.User, *errors.RestErr) {
+	current, err := GetUser(user.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	current.FirstName = user.FirstName
+	current.LastName = user.LastName
+	current.Email = user.Email
+
+	if err := current.Update(); err != nil {
+		return nil, err
+	}
+
+	return current, nil
 }

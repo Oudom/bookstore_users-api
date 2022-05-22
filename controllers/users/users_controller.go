@@ -10,17 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// fmt.Println(user)
-// bytes, err := ioutil.ReadAll(c.Request.Body)
-// if err != nil {
-// 	//TODO: Handle error
-// 	return
-// }
-// if err := json.Unmarshal(bytes, &user); err != nil {
-// 	fmt.Println(err.Error())
-// 	//TODO: Handle json error
-// 	return
-// }
 func CreateUser(c *gin.Context) {
 	var user users.User
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -50,6 +39,28 @@ func GetUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, user)
+}
+
+func UpdateUer(c *gin.Context) {
+	UserId, userErr := strconv.ParseInt(c.Param("user_id"), 10, 64)
+	if userErr != nil {
+		err := errors.NewBadRequestError("user id should be a number")
+		c.JSON(err.Status, err)
+	}
+	var user users.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		restErr := errors.NewBadRequestError("invalid json bbody")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+
+	user.Id = UserId
+	result, err := services.UpdateUser((user)
+	if err != nil {
+		c.JSON(err.Status, err)
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }
 
 func SearchUser(c *gin.Context) {
