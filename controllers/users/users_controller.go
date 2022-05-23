@@ -48,14 +48,16 @@ func UpdateUer(c *gin.Context) {
 		c.JSON(err.Status, err)
 	}
 	var user users.User
+
 	if err := c.ShouldBindJSON(&user); err != nil {
-		restErr := errors.NewBadRequestError("invalid json bbody")
+		restErr := errors.NewBadRequestError("invalid json body")
 		c.JSON(restErr.Status, restErr)
 		return
 	}
 
 	user.Id = UserId
-	result, err := services.UpdateUser(user)
+	isPartial := c.Request.Method == http.MethodPatch
+	result, err := services.UpdateUser(isPartial, user)
 	if err != nil {
 		c.JSON(err.Status, err)
 		return
