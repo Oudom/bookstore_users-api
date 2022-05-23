@@ -66,7 +66,7 @@ func (user *User) Update() *errors.RestErr {
 	return nil
 }
 
-func (user *user) Delete() *errors.RestErr {
+func (user *User) Delete() *errors.RestErr {
 	stmt, err := users_db.Client.Prepare(queryDeleteUser)
 	if err != nil {
 		return errors.NewInternalServerError(err.Error())
