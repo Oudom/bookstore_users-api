@@ -53,6 +53,15 @@ func UpdateUser(isPartial bool, user users.User) (*users.User, *errors.RestErr) 
 }
 
 func DeleteUser(userId int64) *errors.RestErr {
+	_, err := GetUser(userId)
+	if err != nil {
+		return err
+	}
 	user := &users.User{Id: userId}
 	return user.Delete()
+}
+
+func Search(status string) ([]users.User, *errors.RestErr) {
+	dao := &users.User{}
+	return dao.FindByStatus(status)
 }
