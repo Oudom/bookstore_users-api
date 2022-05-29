@@ -60,6 +60,9 @@ func (s *usersService) UpdateUser(isPartial bool, user users.User) (*users.User,
 		if user.Email != "" {
 			current.Email = user.Email
 		}
+		if user.Status != "" {
+			current.Status = user.Status
+		}
 	} else {
 		current.FirstName = user.FirstName
 		current.LastName = user.LastName
