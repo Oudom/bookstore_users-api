@@ -1,9 +1,21 @@
 package services
 
-func GetItem() {
+var (
+	ItemsService itemsServiceInterface = &itemsService{}
+)
+
+type itemsServiceInterface interface {
+	GetItem()
+	SaveItem()
+}
+
+type itemsService struct {
+}
+
+func (s *itemsService) GetItem() {
 
 }
 
-func SaveItem() {
-	
+func (s *itemsService) SaveItem() {
+
 }
