@@ -14,6 +14,7 @@ const (
 	queryUpdateUser       = "UPDATE users SET first_name=?, last_name=?, email=?, status=? WHERE id=?;"
 	queryDeleteUser       = "DELETE FROM users WHERE id=?;"
 	queryFindUserByStatus = "SELECT id, first_name, last_name, email, date_created, status FROM users WHERE status=?;"
+	queryFindAll          = "SELECT id, first_name, last_name, email, date_created, status FROM users;"
 )
 
 func (user *User) Get() *errors.RestErr {
@@ -75,6 +76,34 @@ func (user *User) Delete() *errors.RestErr {
 		return mysql_utils.ParseError(err)
 	}
 	return nil
+}
+
+func (user *User) FindAll() ([]User, *errors.RestErr) {
+	stmt, err := users_db.Client.Prepare(queryFindAll)
+	if err != nil {
+		return nil, errors.NewInternalServerError(err.Error())
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, errors.NewInternalServerError(err.Error())
+	}
+	defer rows.Close()
+
+	results := make([]User, 0)
+	for rows.Next() {
+		var user User
+		if err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status); err != nil {
+			return nil, mysql_utils.ParseError(err)
+		}
+		results = append(results, user)
+	}
+	if len(results) == 0 {
+		return nil, errors.NewNotFoundError("no users found...")
+	}
+
+	return results, nil
 }
 
 func (user *User) FindByStatus(status string) ([]User, *errors.RestErr) {

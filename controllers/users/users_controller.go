@@ -95,6 +95,11 @@ func Search(c *gin.Context) {
 	c.JSON(http.StatusOK, users.Marshall(c.GetHeader("X-Public") == "true"))
 }
 
-func List(c *gin.Context) {
-
+func All(c *gin.Context) {
+	users, err := services.UsersService.FindAllUser()
+	if err != nil {
+		c.JSON(err.Status, err)
+		return
+	}
+	c.JSON(http.StatusOK, users.Marshall(c.GetHeader("X-Public") == "trus"))
 }
