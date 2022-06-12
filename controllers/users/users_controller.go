@@ -101,5 +101,5 @@ func All(c *gin.Context) {
 		c.JSON(err.Status, err)
 		return
 	}
-	c.JSON(http.StatusOK, users.Marshall(c.GetHeader("X-Public") == "trus"))
+	c.JSON(http.StatusOK, users.Marshall(c.GetHeader("X-Public") == "true"))
 }
